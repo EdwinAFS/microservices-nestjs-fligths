@@ -12,11 +12,15 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { IFlight } from 'src/common/interfaces/flight.interface';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('flights')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller('api/v2/flight')
 export class FlightController {
   constructor(private readonly clientProxy: ClientProxySuperFlights) {}

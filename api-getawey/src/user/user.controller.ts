@@ -1,4 +1,4 @@
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import {
   Body,
   Controller,
@@ -14,8 +14,11 @@ import { Observable } from 'rxjs';
 import { UserDTO } from './dto/user.dto';
 import { ClientProxySuperFlights } from './../common/proxy/client-proxy';
 import { IUser } from 'src/common/interfaces/user.interface';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('users')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 @Controller('api/v2/user')
 export class UserController {
   constructor(private readonly clientProxy: ClientProxySuperFlights) {}
