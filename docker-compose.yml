@@ -1,22 +1,85 @@
-version: '3.7'
+version: "3.7"
 
 services:
-  mongodb:
-    image: mongo:latest
-    container_name: mongodb
-    restart: always
-    environment:
-      - MONGO_DATA_DIR=/data/db
-      - MONGO_LOG_DIR=/dev/null
-    volumes:
-      - mongodb:/data/db
-    ports:
-      - 27017:27017
-    networks:
-      - flights
+    app:
+        image: app_flights
+        container_name: app_flights
+        build:
+            context: ./api-getawey
+            dockerfile: Dockerfile
+        env_file: .env
+        ports: 
+            - 80:3000
+        depends_on:
+            - rabbitmq
+            - mongodb
+        restart: always
+        networks:
+            - flights
+    microservice-flights:
+        image: microservice-flights
+        container_name: microservice-flights
+        build:
+            context: ./microservice-flights
+            dockerfile: Dockerfile
+        env_file: .env
+        depends_on:
+            - rabbitmq
+            - mongodb
+        restart: always
+        networks:
+            - flights
+    microservice-passengers:
+        image: microservice-passengers
+        container_name: microservice-passengers
+        build:
+            context: ./microservice-passengers
+            dockerfile: Dockerfile
+        env_file: .env
+        depends_on:
+            - rabbitmq
+            - mongodb
+        restart: always
+        networks:
+            - flights
+    microservice-users:
+        image: microservice-users
+        container_name: microservice-users
+        build:
+            context: ./microservice-users
+            dockerfile: Dockerfile
+        env_file: .env
+        depends_on:
+            - rabbitmq
+            - mongodb
+        restart: always
+        networks:
+            - flights
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: rmq
+        ports:
+            - 5672:5672
+            - 15672:15672
+        restart: always
+        networks:
+            - flights
+    mongodb:
+        image: mongo:latest
+        container_name: mongodb
+        restart: always
+        environment:
+            - MONGO_DATA_DIR=/data/db
+            - MONGO_LOG_DIR=/dev/null
+        volumes:
+            - mongodb:/data/db
+        ports:
+            - 27017:27017
+        networks:
+            - flights
 
 volumes:
-  mongodb:
+    mongodb:
 
 networks:
-  flights:
+    flights:
